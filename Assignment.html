@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prompt-Engineered UI Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020; --surface:#121833; --card:#1a2247; --text:#e6eaf7; --muted:#aab2d5;
+      --primary:#5b8cff; --primary-700:#3d6ff5; --shadow:0 10px 20px rgba(0,0,0,.35);
+      --radius:14px; --maxw:1100px;
+    }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    html{ scroll-behavior:smooth }
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background:linear-gradient(180deg,#080c18 0%,#0b1020 100%);
+    }
+    .container{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 20px }
+    .section{ padding:64px 0 }
+    header.sticky{
+      position:sticky; top:0; z-index:50;
+      background:rgba(11,16,32,.85);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    footer{ border-top:1px solid rgba(255,255,255,.08) }
+
+    /* Shared */
+    .btn{
+      display:inline-block; background:var(--primary); color:#fff;
+      padding:12px 20px; border-radius:var(--radius);
+      font-weight:600; text-decoration:none;
+      transition:background .2s ease, transform .2s ease;
+    }
+    .btn:hover{ background:var(--primary-700); transform:translateY(-2px) }
+    .muted{ color:var(--muted) }
+    a:focus, button:focus, input:focus, textarea:focus{
+      outline:2px solid var(--ring); outline-offset:2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVIGATION BAR -->
+  <header class="sticky" role="banner">
+    <div class="container" id="nav-root">
+      <nav id="nav-root-nav" class="nav" aria-label="Main">
+        <div class="brand">NovaUI</div>
+        <button class="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">☰</button>
+        <ul id="nav-links" class="links">
+          <li><a href="#hero-root">Home</a></li>
+          <li><a href="#services-root">Services</a></li>
+          <li><a href="#contact-root">Contact</a></li>
+          <li><a href="#footer-root">Footer</a></li>
+        </ul>
+      </nav>
+      <style>
+        #nav-root-nav{ display:flex; justify-content:space-between; align-items:center; padding:16px 0 }
+        #nav-root-nav .brand{ font-weight:700; font-size:1.25rem; color:var(--primary) }
+        #nav-root-nav .links{ list-style:none; display:flex; gap:24px; margin:0; padding:0 }
+        #nav-root-nav .links a{
+          text-decoration:none; color:var(--text); font-weight:500; position:relative;
+        }
+        #nav-root-nav .links a::after{
+          content:""; position:absolute; left:0; bottom:-4px; width:100%; height:2px;
+          background:var(--primary); transform:scaleX(0); transition:transform .2s ease;
+        }
+        #nav-root-nav .links a:hover::after, #nav-root-nav .links a:focus::after{ transform:scaleX(1) }
+        #nav-root-nav .menu-toggle{
+          display:none; background:none; border:none; font-size:1.5rem; color:var(--text); cursor:pointer;
+        }
+        @media(max-width:768px){
+          #nav-root-nav .menu-toggle{ display:block }
+          #nav-root-nav .links{
+            display:none; flex-direction:column; gap:16px; margin-top:16px; padding-top:8px;
+            border-top:1px solid rgba(255,255,255,.08);
+          }
+          #nav-root-nav .menu-toggle[aria-expanded="true"] + .links{ display:flex }
+        }
+      </style>
+      <script>
+(function(){
+  const toggle = document.querySelector('#nav-root-nav .menu-toggle');
+  const links = document.querySelector('#nav-links');
+
+  // Toggle open/close
+  toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', !expanded);
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // ✅ Close menu after clicking any nav link
+  links.addEventListener('click', (e) => {
+    if (e.target.tagName.toLowerCase() === 'a') {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+})();
+</script>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="section" id="hero-root" role="region" aria-label="Hero">
+    <div class="container">
+      <div id="hero-root-section" class="hero">
+        <div class="hero-content">
+          <h1>Design prompts that ship production-ready UI</h1>
+          <p class="muted">Generate clean, responsive sections with reusable prompts and modern design. Build faster, with accessible components and consistent theming.</p>
+          <div class="hero-actions" style="display:flex; gap:16px; flex-wrap:wrap">
+            <a href="#services-root" class="btn">Generate Sections</a>
+            <a href="#footer-root" class="link" style="color:var(--primary); font-weight:600; text-decoration:none">View Docs</a>
+          </div>
+        </div>
+        <div class="hero-image" aria-hidden="false">
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop" alt="Developer workspace with code and design elements" style="max-width:100%; border-radius:var(--radius); box-shadow:var(--shadow); margin-top:24px">
+        </div>
+      </div>
+      <style>
+        #hero-root-section{
+          display:flex; flex-direction:column; align-items:center; text-align:center; gap:32px;
+          background:linear-gradient(180deg, rgba(26,34,71,.35) 0%, rgba(18,24,51,.25) 100%);
+          padding:24px; border-radius:var(--radius);
+        }
+        @media(min-width:768px){
+          #hero-root-section{ flex-direction:row; text-align:left; align-items:center }
+          #hero-root-section .hero-content{ flex:1 }
+          #hero-root-section .hero-image{ flex:1 }
+        }
+        #hero-root-section h1{ font-size:2.5rem; font-weight:700; margin:0 0 16px }
+      </style>
+    </div>
+  </section>
+
+  <!-- SERVICES / FEATURES -->
+  <section class="section" id="services-root" role="region" aria-label="Services">
+    <div class="container">
+      <div id="services-root-section" class="services">
+        <h2 class="services-title">Our Features</h2>
+        <div class="services-grid" role="list">
+          <article class="service-card" role="listitem" tabindex="0">
+            <div class="icon" aria-hidden="true">💻</div>
+            <h3>Responsive Layouts</h3>
+            <p>Designs that adapt seamlessly across desktop, tablet, and mobile devices.</p>
+          </article>
+          <article class="service-card" role="listitem" tabindex="0">
+            <div class="icon" aria-hidden="true">📑</div>
+            <h3>Semantic HTML</h3>
+            <p>Clean, semantic markup that improves accessibility and SEO performance.</p>
+          </article>
+          <article class="service-card" role="listitem" tabindex="0">
+            <div class="icon" aria-hidden="true">♿</div>
+            <h3>Accessible Components</h3>
+            <p>Keyboard-friendly and screen-reader compatible UI elements for all users.</p>
+          </article>
+          <article class="service-card" role="listitem" tabindex="0">
+            <div class="icon" aria-hidden="true">🎨</div>
+            <h3>Consistent Theming</h3>
+            <p>Unified colors, typography, and spacing for a professional look.</p>
+          </article>
+          <article class="service-card" role="listitem" tabindex="0">
+            <div class="icon" aria-hidden="true">✍️</div>
+            <h3>Clean Typography</h3>
+            <p>Readable, modern fonts with balanced hierarchy and spacing.</p>
+          </article>
+          <article class="service-card" role="listitem" tabindex="0">
+            <div class="icon" aria-hidden="true">🚀</div>
+            <h3>Production Hosting</h3>
+            <p>Deploy-ready code that works smoothly on Netlify, Vercel, or GitHub Pages.</p>
+          </article>
+        </div>
+      </div>
+      <style>
+        #services-root-section{ text-align:center }
+        #services-root-section .services-title{
+          font-size:2rem; font-weight:700; margin-bottom:40px; color:var(--primary);
+        }
+        #services-root-section .services-grid{ display:grid; gap:24px }
+        @media(min-width:768px){
+          #services-root-section .services-grid{ grid-template-columns:repeat(3,1fr) }
+        }
+        #services-root-section .service-card{
+          background:var(--card); border-radius:var(--radius); padding:24px; text-align:left;
+          box-shadow:var(--shadow); transition:transform .2s ease, box-shadow .2s ease;
+        }
+        #services-root-section .service-card:hover,
+        #services-root-section .service-card:focus{ transform:translateY(-4px); box-shadow:0 12px 24px rgba(0,0,0,.45) }
+        #services-root-section .icon{ font-size:2rem; margin-bottom:12px }
+        #services-root-section h3{ margin:0 0 8px; font-size:1.25rem; font-weight:600 }
+        #services-root-section p{ margin:0; color:var(--muted); line-height:1.5 }
+      </style>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM -->
+  <section class="section" id="contact-root" role="region" aria-label="Contact form">
+  <div class="container">
+    <div id="contact-root-section" class="contact">
+      <h2>Contact Us</h2>
+      <form id="contact-form" novalidate aria-describedby="form-status">
+        
+        <div class="field">
+          <label for="name">Name <span aria-hidden="true">*</span></label>
+          <input type="text" id="name" name="name" placeholder="Your name" required aria-required="true">
+          <small class="error" id="error-name" aria-live="polite"></small>
+        </div>
+
+        <div class="field">
+          <label for="email">Email <span aria-hidden="true">*</span></label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required aria-required="true">
+          <small class="error" id="error-email" aria-live="polite"></small>
+        </div>
+
+        <div class="field">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" placeholder="Optional">
+          <small class="error" id="error-company" aria-live="polite"></small>
+        </div>
+
+        <div class="field">
+          <label for="message">Message <span aria-hidden="true">*</span></label>
+          <textarea id="message" name="message" placeholder="How can we help?" required aria-required="true"></textarea>
+          <small class="error" id="error-message" aria-live="polite"></small>
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">Send Message</button>
+        <div id="form-status" class="status" aria-live="polite" role="status"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  #contact-root-section{ max-width:700px; margin:0 auto }
+  #contact-root-section h2{ text-align:center; margin-bottom:24px; color:var(--primary) }
+  #contact-root-section form{ display:flex; flex-direction:column; gap:16px }
+  #contact-root-section .field{ display:flex; flex-direction:column; gap:8px }
+  #contact-root-section label{ font-weight:600 }
+  #contact-root-section input, #contact-root-section textarea{
+    padding:12px; border-radius:var(--radius);
+    border:1px solid rgba(255,255,255,.18); background:rgba(18,24,51,.5);
+    color:var(--text); outline:none;
+  }
+  #contact-root-section input::placeholder, #contact-root-section textarea::placeholder{ color:rgba(230,234,247,.6) }
+  #contact-root-section textarea{ min-height:130px; resize:vertical }
+  #contact-root-section .error{ color:#ff7b7b; min-height:18px }
+  #contact-root-section .status{ margin-top:8px; font-weight:600 }
+  #contact-root-section .loading{ opacity:.8; pointer-events:none }
+</style>
+
+<script>
+(function(){
+  const form=document.getElementById('contact-form');
+  const status=document.getElementById('form-status');
+  const btn=document.getElementById('submit-btn');
+
+  function setError(id,msg){
+    const el=document.getElementById(id);
+    if(el) el.textContent=msg||"";
+  }
+  function validate(){
+    let ok=true;
+    const name=document.getElementById('name').value.trim();
+    const email=document.getElementById('email').value.trim();
+    const message=document.getElementById('message').value.trim();
+    setError('error-name',""); setError('error-email',""); setError('error-message',"");
+
+    if(!name){ setError('error-name',"Name is required."); ok=false; }
+    const emailPattern=/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+    if(!email){ setError('error-email',"Email is required."); ok=false; }
+    else if(!emailPattern.test(email)){ setError('error-email',"Please enter a valid email address."); ok=false; }
+    if(!message){ setError('error-message',"Message is required."); ok=false; }
+    return ok;
+  }
+
+  form.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    status.textContent="";
+    if(!validate()) return;
+
+    btn.classList.add('loading');
+    btn.textContent="Sending…";
+    setTimeout(()=>{
+      btn.classList.remove('loading');
+      btn.textContent="Send Message";
+      status.textContent="Message sent successfully!";
+      form.reset();
+    },1200);
+  });
+})();
+</script>
+
+  <!-- FOOTER -->
+  <footer class="section" id="footer-root" role="contentinfo" aria-label="Footer">
+    <div class="container">
+      <div id="footer-root-section" class="footer">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <h3>NovaUI</h3>
+            <p class="muted">Building clean, responsive, and accessible web components with AI-powered prompts.</p>
+          </div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#hero-root">Home</a></li>
+              <li><a href="#services-root">Services</a></li>
+              <li><a href="#contact-root">Contact</a></li>
+              <li><a href="#footer-root">Footer</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h4>Contact</h4>
+            <p>Email: info@novaui.com</p>
+            <p>Phone: +91 98765 43210</p>
+            <div class="social">
+              <a href="#" aria-label="Twitter">🐦</a>
+              <a href="#" aria-label="LinkedIn">💼</a>
+              <a href="#" aria-label="GitHub">🐙</a>
+            </div>
+          </div>
+        </div>
+        <p class="footer-copy">© 2025 NovaUI. All rights reserved.</p>
+      </div>
+
+      <style>
+        #footer-root-section{ background:var(--surface); padding:40px 20px; border-radius:var(--radius) }
+        #footer-root-section .footer-grid{ display:grid; gap:32px }
+        @media(min-width:768px){
+          #footer-root-section .footer-grid{ grid-template-columns:repeat(3,1fr) }
+        }
+        #footer-root-section h3, #footer-root-section h4{ margin-bottom:12px; color:var(--primary) }
+        #footer-root-section ul{ list-style:none; padding:0; margin:0 }
+        #footer-root-section ul li{ margin-bottom:8px }
+        #footer-root-section ul a{ text-decoration:none; color:var(--text) }
+        #footer-root-section ul a:hover{ color:var(--primary) }
+        #footer-root-section .social a{ margin-right:12px; font-size:1.5rem; text-decoration:none }
+        #footer-root-section .footer-copy{ text-align:center; margin-top:24px; color:var(--muted) }
+      </style>
+    </div>
+  </footer>
+</body>
+</html>
